@@ -1,0 +1,74 @@
+from datetime import datetime
+
+from sqlalchemy import Engine, text
+
+from app.domain.models.user import User
+from app.domain.ports.user import UserPort
+
+class UserRepository(UserPort):
+
+    def __init__(self, db_engine: Engine):
+        self.db_engine  = db_engine
+
+    async def get_user_by_id(self, user_id: int) -> User | None:
+        async with self.db_engine.connect() as conn:
+            stmt = text (
+                """
+                SELECT id, created_at, updated_at, name, email, password
+                FROM users
+                WHERE id = :user_id
+                """
+            )
+            stmt = stmt.bindparams(user_id=user_id)
+            result = await conn.execute(stmt)
+            raw_user = result.fetchone()
+
+            if raw_user:
+                return User.model_validate(raw_user._mapping)
+
+            return None
+
+
+    async def create_user(self, user: User) -> User:
+        async with self.db_engine.connect() as conn:
+            stmt = text(
+                """
+                INSERT INTO users (name, email, creat_at, password)
+                VALUES (:name, :email, :created_at, :password)
+                RETURNING id, name, email, created_at
+                """
+            )
+            stmt = stmt.bindparams(
+                name=user.name,
+                email=user.email,
+                password=user.password
+            )
+            result = await conn.execute(stmt)
+            raw_user = result.fetchone()
+
+            return User.model_validate(raw_user._mapping)
+
+    async def update_user(self, user: User) -> User | None:
+        async with self.db_engine.connect() as conn:
+            stmt = text(
+                """
+                UPDATE users
+                SET name = :name, email = :email, updated_at = :updated_at
+                WHERE id = :id
+                RETURNING id, name, email, created_at, updated_at    
+                """
+            )
+            stmt = stmt.bindparams(id=user.id,
+                                   name=user.name,
+                                   mail=user.email,
+                                   created_at=user.created_at,
+                                   updated_at=datetime.now())
+            result = await conn.execute(stmt)
+            raw_user = result.fetchone()
+
+            if raw_user:
+                return User.model_validate(raw_user._mapping)
+
+            return None
+
+

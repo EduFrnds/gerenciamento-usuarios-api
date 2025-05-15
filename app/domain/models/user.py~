@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     id: Optional[int]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     name: str
     email: str
     password: str

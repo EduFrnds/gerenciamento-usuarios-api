@@ -16,7 +16,7 @@ def get_users():
     logger.info("Requisição recebida no endpoint teste")
     return {
         "mensagem": "API de Gerenciamento de Usuários",
-        "status": "Online"
+        "status": "API operacional"
     }
 
 

@@ -1,0 +1,21 @@
+from abc import ABC, abstractmethod
+from app.domain.models.user import User
+
+
+class UserPort(ABC):
+
+    @abstractmethod
+    async def get_user_by_id(self, user_id: int) -> User | None:
+        pass
+
+    @abstractmethod
+    async def create_user(self, user: User) -> User:
+        pass
+
+    @abstractmethod
+    async def update_user(self, user: User) -> User | None:
+        pass
+
+    @abstractmethod
+    async def delete_user(self, user_id: int):
+        pass
