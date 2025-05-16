@@ -1,41 +1,45 @@
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from contextlib import contextmanager
-from typing import Generator
+import sqlite3
+from contextlib import closing
 
-class DatabaseConfig:
-    def __init__(self, database_url: str = "sqlite:///./users.db"):
-        self.database_url = database_url
-        self.engine = create_engine(
-            self.database_url,
-            connect_args={"check_same_thread": False} if "sqlite" in self.database_url else {}
-        )
-        self.session_local = sessionmaker(
-            bind=self.engine,
-            autocommit=False,
-            autoflush=False,
-            expire_on_commit=False
-        )
-        self.base = declarative_base()
+DATABASE_URL = "sqlite:///./database.db"  # Caminho do banco de dados
 
-    @contextmanager
-    def get_db(self) -> Generator:
 
-        db = self.session_local()
-        try:
-            yield db
-        finally:
-            db.close()
+def create_connection():
+    """Cria uma conexão com o banco de dados SQLite."""
+    conn = sqlite3.connect(DATABASE_URL.split(':///')[1])
+    return conn
 
-    def create_tables(self):
 
-        self.base.metadata.create_all(bind=self.engine)
+def create_tables():
+    """Cria as tabelas no banco de dados."""
+    with closing(create_connection()) as conn:
+        cursor = conn.cursor()
 
-    @staticmethod
-    def table_exists(self, table_name: str) -> bool:
+        # Criação da tabela de usuários
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,                
+            )
+        ''')
 
-        inspector = inspect(self.engine)
-        return table_name in inspector.get_table_names()
+        conn.commit()
 
-database_config = DatabaseConfig()
+
+def populate_db():
+    """Popula o banco de dados com dados iniciais."""
+    with closing(create_connection()) as conn:
+        cursor = conn.cursor()
+
+        # Inserção de dados iniciais
+        users = [
+            ("Alice", "alice@example.com"),
+            ("Bob", "bob@example.com"),
+        ]
+
+        cursor.executemany('''
+            INSERT INTO users (name, email) VALUES (?, ?)
+        ''', users)
+
+        conn.commit()
