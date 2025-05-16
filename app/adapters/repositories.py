@@ -1,80 +1,46 @@
-from datetime import datetime
-
-from sqlalchemy import Engine, text
-
 from app.domain.models.user import User
 from app.domain.ports.user import UserPort
 
 class UserRepository(UserPort):
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
 
-    def __init__(self, db_engine: Engine):
-        self.db_engine  = db_engine
+    async def get_all_users(self):
+        cursor = self.db_connection.cursor()
+        cursor.execute("SELECT id, name, email FROM users")
+        rows = cursor.fetchall()
+        return [User.model_validate(dict(id=row[0], user_name=row[1], user_email=row[2])) for row in rows]
 
     async def get_user_by_id(self, user_id: int) -> User | None:
-        async with self.db_engine.connect() as conn:
-            stmt = text (
-                """
-                SELECT id, created_at, updated_at, name, email, password
-                FROM users
-                WHERE id = :user_id
-                """
-            )
-            stmt = stmt.bindparams(user_id=user_id)
-            result = await conn.execute(stmt)
-            raw_user = result.fetchone()
-
-            if raw_user:
-                return User.model_validate(raw_user._mapping)
-
-            return None
-
+        cursor = self.db_connection.cursor()
+        cursor.execute("SELECT id, name, email FROM users WHERE id = ?", (user_id,))
+        row = cursor.fetchone()
+        if row:
+            return User.model_validate(dict(id=row[0], user_name=row[1], user_email=row[2]))
+        return None
 
     async def create_user(self, user: User) -> User:
-        async with self.db_engine.connect() as conn:
-            stmt = text(
-                """
-                INSERT INTO users (name, email, creat_at, password)
-                VALUES (:name, :email, :created_at, :password)
-                RETURNING id, name, email, created_at
-                """
-            )
-            stmt = stmt.bindparams(
-                name=user.name,
-                email=user.email,
-                password=user.password
-            )
-            result = await conn.execute(stmt)
-            raw_user = result.fetchone()
-
-            return User.model_validate(raw_user._mapping)
+        cursor = self.db_connection.cursor()
+        cursor.execute(
+            "INSERT INTO users (name, email) VALUES (?, ?)",
+            (user.user_name, user.user_email)
+        )
+        self.db_connection.commit()
+        user.id = cursor.lastrowid  # Set the new user's ID
+        return user
 
     async def update_user(self, user: User) -> User | None:
-        async with self.db_engine.connect() as conn:
-            stmt = text(
-                """
-                UPDATE users
-                SET name = :name, email = :email, updated_at = :updated_at
-                WHERE id = :id
-                RETURNING id, name, email, created_at, updated_at    
-                """
-            )
-            stmt = stmt.bindparams(id=user.id,
-                                   name=user.name,
-                                   mail=user.email,
-                                   created_at=user.created_at,
-                                   updated_at=datetime.now())
-            result = await conn.execute(stmt)
-            raw_user = result.fetchone()
-
-            if raw_user:
-                return User.model_validate(raw_user._mapping)
-
-            return None
+        cursor = self.db_connection.cursor()
+        cursor.execute(
+            "UPDATE users SET name = ?, email = ? WHERE id = ?",
+            (user.user_name, user.user_email, user.id)
+        )
+        self.db_connection.commit()
+        if cursor.rowcount > 0:
+            return user
+        return None
 
     async def delete_user(self, user_id: int):
-        async with self.db_engine.connect() as conn:
-            stmt = text(
-                """DELETE FROM users WHERE id = :id"""
-            )
-            stmt = stmt.bindparams(id=user_id)
-            await conn.execute(stmt)
+        cursor = self.db_connection.cursor()
+        cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        self.db_connection.commit()
