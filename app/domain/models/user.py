@@ -1,7 +1,9 @@
 import re
 import string
+from typing import Tuple, Optional
 
 from app.domain.ports.repository.user import IUsersRepository
+from app.infra.models.user import UserModel
 
 
 class WeakPasswordError(Exception):
@@ -51,40 +53,40 @@ def is_strong_pass(
             )
     return True
 
-class User:
-
-    def __init__(self):
-        pass
-
-    @classmethod
-    def register(cls, user, repository: IUsersRepository):
-        response = repository.find(username=user.username)
-
-        if response:
-            return False
-
-        response = is_strong_pass(user.password)
-        if not isinstance(response, bool):
-            return response, None
-
-        user = repository.register(user)
-
-        return True, user
-
-    # @classmethod
-    # def authenticate_user(
-    #         cls,
-    #         user_crendentials,
-    #         repository: IUsersRepository
-    # ) -> Tuple[bool, Optional[UserModel], Optional[str]]:
-    #
-    #     user = repository.find(
-    #         username=user_crendentials.username, password=user_crendentials.password
-    #     )
-    #     if not user:
-    #         return False, None, "User not found"
-    #
-    #     if user.password != user_crendentials.password:
-    #         return False, None, "Invalid credentials"
-    #
-    #     return True, user, None
+# class User: - Classe não implementada, validação do usuário.
+#
+#     def __init__(self):
+#         pass
+#
+#     @classmethod
+#     def register(cls, user, repository: IUsersRepository):
+#         response = repository.find(username=user.username)
+#
+#         if response:
+#             return False
+#
+#         response = is_strong_pass(user.password)
+#         if not isinstance(response, bool):
+#             return response, None
+#
+#         user = repository.register(user)
+#
+#         return True, user
+#
+#     @classmethod
+#     def authenticate_user(
+#             cls,
+#             user_crendentials,
+#             repository: IUsersRepository
+#     ) -> Tuple[bool, Optional[UserModel], Optional[str]]:
+#
+#         user = repository.find(
+#             username=user_crendentials.username, password=user_crendentials.password
+#         )
+#         if not user:
+#             return False, None, "User not found"
+#
+#         if user.password != user_crendentials.password:
+#             return False, None, "Invalid credentials"
+#
+#         return True, user, None

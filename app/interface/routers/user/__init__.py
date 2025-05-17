@@ -5,7 +5,12 @@ from app.adapters.schemas.user import UserCreateSchema, UserResponse
 from app.logs.logging_config import configure_logging
 
 logger = configure_logging()
-router = APIRouter()
+
+router = APIRouter(
+    prefix="/users",
+    tags=["users"],
+    responses={401: {"description": "Não autorizado"}},
+)
 
 
 @router.post('/users')
