@@ -7,8 +7,8 @@ API REST para gerenciamento de usuários construída com FastAPI, SQLite e Arqui
 - Framework web: FastAPI
 - Banco de dados: SQLite
 - Arquitetura: Hexagonal (Ports and Adapters)
-- Autenticação: JWT - Não implementado
-- Testes unitários - Não implementado
+- Autenticação: JWT - *Não implementado*
+- Testes unitários - *Não implementado*
 - Documentação automática da API
 
 ## Requisitos
@@ -73,26 +73,24 @@ A documentação da API estará disponível em:
 ```
 gerenciamento-usuarios-api/
 │
-├── .venv/ # Ambiente virtual
+├── .venv/                                          # Ambiente virtual
 │
-├── app/ # Código do aplicativo
-│ ├── adapters/ # Adaptadores para repositórios e interfaces
-│ ├── configs/ # Configurações do projeto
-│ │ └── settings.py # Configurações principais
-│ ├── domain/ # Lógica de domínio
-│ │ └── models.py # Modelos de domínio
-│ ├── infra/ # Infraestrutura do projeto
-│ │ └── ports/ # Portas de comunicação
-│ ├── interface/ # Interfaces de entrada
-│ │ └── routers/ # Roteadores da API
-│ │ └── init.py # Inicialização do módulo
-│ ├── logs/ # Logs do aplicativo
-│ │ ├── init.py # Inicialização do módulo de logs
-│ │ └── main.db # Banco de dados principal
-│ └── main.py # Ponto de entrada do aplicativo
-│
-├── .gitignore # Arquivo para ignorar arquivos no Git
-└── .env # Variáveis de ambiente
+├── app/                                            # Código do aplicativo
+│ ├── adapters/                                     # Adaptadores para repositórios e interfaces
+  │ ├── configs/                                    # Configurações do projeto
+│ │ └── settings.py                                 # Configurações principais
+│ ├── domain/                                       # Lógica de domínio
+│ │ └── models.py                                   # Modelos de domínio
+│ ├── infra/                                        # Infraestrutura do projeto
+│ │ └── ports/                                      # Portas de comunicação
+│ ├── interface/                                    # Interfaces de entrada
+│ │ └── routers/                                    # Roteadores da API
+│ │ └── init.py                                     # Inicialização do módulo
+│ ├── logs/                                         # Logs do aplicativo
+│ │ ├── init.py                                     # Inicialização do módulo de logs
+│ │ └── main.db                                     # Banco de dados principal
+│ └── main.py                                       # Ponto de entrada do aplicativo
+└── .env                                            # Variáveis de ambiente
 ```
 
 ## Arquitetura Hexagonal
