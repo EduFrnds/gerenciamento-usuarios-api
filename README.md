@@ -71,20 +71,28 @@ A documentação da API estará disponível em:
 ## Estrutura do Projeto
 
 ```
-.
-├── app/
-│   ├── adapters/             # Adaptadores para comunicação externa
-│   │   ├── inbound/          # Adaptadores de entrada (controllers, HTTP)
-│   │   └── outbound/         # Adaptadores de saída (persistência)
-│   ├── domain/               # Regras de negócio e entidades
-│   │   ├── entities/         # Entidades de domínio
-│   │   └── services/         # Serviços de domínio
-│   └── ports/                # Interfaces para adaptadores
-│       ├── inbound/          # Portas de entrada (interfaces de serviços)
-│       └── outbound/         # Portas de saída (interfaces de repositórios)
-├── config/                   # Configurações da aplicação
-├── docs/                     # Documentação do projeto
-└── tests/                    # Testes unitários
+gerenciamento-usuarios-api/
+│
+├── .venv/ # Ambiente virtual
+│
+├── app/ # Código do aplicativo
+│ ├── adapters/ # Adaptadores para repositórios e interfaces
+│ ├── configs/ # Configurações do projeto
+│ │ └── settings.py # Configurações principais
+│ ├── domain/ # Lógica de domínio
+│ │ └── models.py # Modelos de domínio
+│ ├── infra/ # Infraestrutura do projeto
+│ │ └── ports/ # Portas de comunicação
+│ ├── interface/ # Interfaces de entrada
+│ │ └── routers/ # Roteadores da API
+│ │ └── init.py # Inicialização do módulo
+│ ├── logs/ # Logs do aplicativo
+│ │ ├── init.py # Inicialização do módulo de logs
+│ │ └── main.db # Banco de dados principal
+│ └── main.py # Ponto de entrada do aplicativo
+│
+├── .gitignore # Arquivo para ignorar arquivos no Git
+└── .env # Variáveis de ambiente
 ```
 
 ## Arquitetura Hexagonal
