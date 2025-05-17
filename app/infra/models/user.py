@@ -1,5 +1,4 @@
 import datetime
-
 import sqlalchemy
 
 from app.infra.database.sql import Base

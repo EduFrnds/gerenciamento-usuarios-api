@@ -49,20 +49,3 @@ class UserListResponse(BaseModel):
     page: int
     size: int
     pages: int
-
-# Esquemas de autenticação
-class Token(BaseModel):
-    """Esquema para token de acesso."""
-    access_token: str
-    token_type: str = "bearer"
-
-
-class TokenData(BaseModel):
-    """Esquema para dados do token."""
-    username: str
-
-
-class LoginRequest(BaseModel):
-    """Esquema para requisição de login."""
-    username: str
-    password: str
