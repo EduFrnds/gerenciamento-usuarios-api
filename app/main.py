@@ -1,20 +1,17 @@
 from fastapi import FastAPI
-from app.configs.database import create_tables, populate_db
-from app.logging_config import configure_logging
-from app.adapters.entrypoints.rest.v1.user import router as user_router
+from app.logs.logging_config import configure_logging
+from app.infra.models import init_sql
+from app.interface.routers import configure
 import uvicorn
-
 
 logger = configure_logging()
 app = FastAPI()
 
-# Criar tabelas e popular o banco de dados
-# create_tables()
-# populate_db()
-# logger.info("Tabelas do banco de dados criadas e populadas")
+# Função inicializadora do sql
+init_sql()
 
-# Incluir o router de usuários
-app.include_router(user_router)
+# Configuração de rotas
+configure(app)
 
 @app.get("/")
 def get_users():

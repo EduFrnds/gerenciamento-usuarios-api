@@ -1,2 +1,0 @@
-HEADER_CONTENT_TYPE = "content-type"
-HEADER_CONTENT_TYPE_APPLICATION_JSON = "application/json"
