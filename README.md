@@ -120,7 +120,3 @@ Para executar os testes unitários:
 ```bash
 pytest
 ```
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT.
